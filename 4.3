@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct point
+{
+    int x;
+    int y;
+    int flag; //флажок. закрываем когда переходим к точке, чтобы не ходить по одним и тем же несколько раз 
+}point;
+
+double length(point a, point b)
+{
+    double l = sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+    return l;
+}
+
+int main()
+{
+    int n, i, j;
+    point A, B;
+    scanf("%d %d %d %d", &A.x, &A.y, &B.x, &B.y);
+    scanf("%d", &n);
+    point* a = (point*)malloc(n * sizeof(point));
+    for(i = 0; i < n; i++)
+    {
+        scanf("%d %d", &a[i].x, &a[i].y);   //загоняем промежуточные точки в массив
+        a[i].flag = 1;
+    }
+    double l, lmin = 0, s = 0;
+    int imin, cimin;
+    for(i = 0; i < n; i++)
+    {
+        l = length(A, a[i]);
+        if(l < lmin || lmin == 0)
+        {
+            lmin = l;
+            imin = i;
+        }
+    }
+    cimin = imin;
+    a[imin].flag = 0;
+    printf("Marshrut:\n%d %d\n%d %d\n", A.x, A.y, a[imin].x, a[imin].y);
+    s += lmin;
+    lmin = 0;
+    for(j = 1; j < n; j++)
+    {
+        for(i = 0; i < n; i++)
+        {
+            l = length(a[cimin], a[i]);
+            if((l < lmin || lmin == 0) && a[i].flag != 0)  //ищем точку ближайшую к данной
+            {
+                lmin = l;
+                imin = i;
+            }
+        }
+        cimin = imin;
+        a[imin].flag = 0;
+        printf("%d %d\n", a[imin].x, a[imin].y);
+        s += lmin;
+        lmin = 0;
+    }
+    printf("%d %d\n", B.x, B.y);
+    s += length(a[cimin], B);
+    printf("Dlina marshruta: %lg", s);
+    free(a);
+    return 0;
+}
